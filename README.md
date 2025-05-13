@@ -1,6 +1,7 @@
 # Ex-2-GENERATION OF LEXICAL TOKENS LEX FLEX TOOL
-# NAME : Shyam Kumar E
-# REG.NO : 212223230207
+# DATE: 22/04/2025
+## Name : Shyam Kumar E
+## Reg No : 212223230207
 # AIM
 ## To write a lex program to implement lexical analyzer to recognize a few patterns.
 # ALGORITHM
@@ -33,83 +34,56 @@
 6.	Compile the lex program with lex compiler to produce output file as lex.yy.c. eg $ lex filename.l $ cc lex.yy.c
 7.	Compile that file with C compiler and verify the output.
 
-# INPUT:
-```
-%{
+# INPUT
+```C
 #include <stdio.h>
-#include <stdlib.h>  // for exit()
-int COMMENT = 0;
-%}
+#include <ctype.h>
+#include <string.h>
 
-identifier [a-zA-Z_][a-zA-Z0-9_]*
-keyword int|float|char|double|while|for|do|if|break|continue|void|switch|case|long|struct|const|typedef|return|else|goto
-
-%%
-
-"#".*                             { printf("\n%s is a PREPROCESSOR DIRECTIVE", yytext); }
-
-{keyword}                         { if (!COMMENT) printf("\n\t%s is a KEYWORD", yytext); }
-
-"/*"                              { COMMENT = 1; }
-"*/"                              { COMMENT = 0; }
-
-{identifier}\(                    { if (!COMMENT) printf("\n\nFUNCTION\n\t%s", yytext); }
-
-"{"                               { if (!COMMENT) printf("\n BLOCK BEGINS"); }
-"}"                               { if (!COMMENT) printf("\n BLOCK ENDS"); }
-
-{identifier}(\[[0-9]*\])?         { if (!COMMENT) printf("\n %s is an IDENTIFIER", yytext); }
-
-\".*\"                            { if (!COMMENT) printf("\n\t%s is a STRING", yytext); }
-
-[0-9]+                            { if (!COMMENT) printf("\n\t%s is a NUMBER", yytext); }
-
-\)(\;)?                           { if (!COMMENT) { printf("\n\t"); ECHO; printf("\n"); } }
-
-\(                                { if (!COMMENT) ECHO; }
-
-"="                               { if (!COMMENT) printf("\n\t%s is an ASSIGNMENT OPERATOR", yytext); }
-
-"<="|">="|"<"|"=="|">"            { if (!COMMENT) printf("\n\t%s is a RELATIONAL OPERATOR", yytext); }
-
-[ \t\n]+                          ; // Ignore whitespace
-
-.                                 { /* ignore unknown tokens */ }
-
-%%
-
-int main(int argc, char **argv) {
-    if (argc > 1) {
-        FILE *file = fopen(argv[1], "r");
-        if (!file) {
-            printf("Could not open %s\n", argv[1]);
-            exit(1);
+int isKeyword(char buffer[]) {
+    char keywords[5][10] = {"if", "else", "while", "for", "int"};
+    for (int i = 0; i < 5; ++i) {
+        if (strcmp(buffer, keywords[i]) == 0) {
+            return 1;
         }
-        yyin = file;
     }
-    yylex();
-    printf("\n\n");
     return 0;
 }
 
-int yywrap() {
-    return 1;
+int main() {
+    char ch, buffer[15];
+    char operators[] = "+-*/=";
+    int i = 0;
+
+    printf("Enter your input: ");
+    
+    while ((ch = getchar()) != EOF) {
+        if (strchr(operators, ch)) {
+            printf("Operator: %c\n", ch);
+        } else if (isalnum(ch)) {
+            buffer[i++] = ch;
+        } else if ((ch == ' ' || ch == '\n' || ch == '\t') && i != 0) {
+            buffer[i] = '\0';
+
+            if (isKeyword(buffer)) {
+                printf("Keyword: %s\n", buffer);
+            } else if (isdigit(buffer[0])) {
+                printf("Number: %s\n", buffer);
+            } else {
+                printf("Identifier: %s\n", buffer);
+            }
+            i = 0;
+        }
+    }
+
+    return 0;
 }
 ```
-# var.c
-```
-#include<stdio.h>
-int main(){
-int a,b; return 0;
-}
-```
-#
-#
-#
-#
-#
-# OUTPUT:
-![image](https://github.com/user-attachments/assets/3b8f0fae-30a1-4d45-a62e-467242a4585d)
+
+# OUTPUT
+
+![Screenshot 2025-04-17 144556](https://github.com/user-attachments/assets/004bf7ea-777d-4c1b-900f-81484ffeb10f)
+
 
 # RESULT
 ## The lexical analyzer is implemented using lex and the output is verified.
